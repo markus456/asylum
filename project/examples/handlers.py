@@ -262,3 +262,21 @@ class RecurringTransactionsHolviHandler(BaseRecurringTransactionsHandler):
         msg = "on_created called for %s (from %s)" % (t, rt)
         logger.info(msg)
         print(msg)
+
+
+class GrantRequestHandler(ExampleBaseHandler):
+
+    def on_approving(self, application, member):
+        msg = "on_approving called for %s" % application
+        logger.info(msg)
+        print(msg)
+
+    def on_approved(self, application, member):
+        msg = "on_approved called for %s" % application
+        logger.info(msg)
+        print(msg)
+        mail = EmailMessage()
+        mail.to = [member.email, ]
+        mail.body = """Your grant request has been approved"""
+        mail.send()
+

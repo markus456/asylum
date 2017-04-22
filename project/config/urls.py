@@ -36,6 +36,7 @@ urlpatterns = [
 
     # Your stuff: custom urls includes go here
     url(r'^members/', include('members.urls')),
+    url(r'^active_members/', include('active_members.urls')),
     url(r'^velkoja/', include('velkoja.urls')),
 
     url(r'^api/', include(router.urls)),
