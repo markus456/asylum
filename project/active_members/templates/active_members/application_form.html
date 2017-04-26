@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load bootstrap3 staticfiles i18n %}
+
+{% block page_title %}{% trans "Request Active membership" %}{% endblock page_title %}
+{% block main_title %}{% trans "Request Active membership" %}{% endblock main_title %}
+
+{% block content %}
+<div class="container-fluid">
+    <form role="form" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form required_css_class='required' %}
+        {% trans "Submit" as submittext %}
+        {% buttons submit=submittext %}{% endbuttons %}
+    </form>
+</div>
+{% endblock %}
