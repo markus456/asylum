@@ -76,7 +76,7 @@ class MemberType(AsylumModel):
         verbose_name_plural = _('Member Types')
 
 
-revisions.default_revision_manager.register(MemberType)
+revisions.register(MemberType)
 
 
 class Member(MemberCommon):
@@ -101,7 +101,7 @@ class Member(MemberCommon):
         verbose_name_plural = _('Members')
 
 
-revisions.default_revision_manager.register(Member)
+revisions.register(Member)
 
 
 class MembershipApplicationTag(AsylumModel):
@@ -115,7 +115,7 @@ class MembershipApplicationTag(AsylumModel):
         verbose_name_plural = _('Membership Application Tags')
 
 
-revisions.default_revision_manager.register(MembershipApplicationTag)
+revisions.register(MembershipApplicationTag)
 
 
 class MembershipApplication(MemberCommon):
@@ -165,7 +165,7 @@ class MembershipApplication(MemberCommon):
         verbose_name_plural = _('Membership Applications')
 
 
-revisions.default_revision_manager.register(MembershipApplication)
+revisions.register(MembershipApplication)
 
 
 class MemberNote(AsylumModel):
@@ -182,4 +182,4 @@ class MemberNote(AsylumModel):
         return _("Notes about %s on %s") % (self.member, self.stamp)
 
 
-revisions.default_revision_manager.register(MemberNote)
+revisions.register(MemberNote)

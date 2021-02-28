@@ -19,7 +19,7 @@ class TokenType(AsylumModel):
         ordering = ['label', ]
 
 
-revisions.default_revision_manager.register(TokenType)
+revisions.register(TokenType)
 
 
 class Token(AsylumModel):
@@ -45,7 +45,7 @@ class Token(AsylumModel):
         ordering = ['owner__lname', 'owner__fname', 'ttype__label']
 
 
-revisions.default_revision_manager.register(Token)
+revisions.register(Token)
 
 
 class AccessType(AsylumModel):
@@ -62,7 +62,7 @@ class AccessType(AsylumModel):
         ordering = ['label', ]
 
 
-revisions.default_revision_manager.register(AccessType)
+revisions.register(AccessType)
 
 
 class Grant(AsylumModel):
@@ -80,7 +80,7 @@ class Grant(AsylumModel):
         ordering = ['owner__lname', 'owner__fname', 'atype__label']
 
 
-revisions.default_revision_manager.register(Grant)
+revisions.register(Grant)
 
 
 class NonMemberToken(AsylumModel):
@@ -109,4 +109,4 @@ class NonMemberToken(AsylumModel):
         ordering = ['contact', 'ttype__label']
 
 
-revisions.default_revision_manager.register(NonMemberToken)
+revisions.register(NonMemberToken)

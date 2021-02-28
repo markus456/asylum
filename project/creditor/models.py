@@ -28,7 +28,7 @@ class TransactionTag(AsylumModel):
         ordering = ['label', ]
 
 
-revisions.default_revision_manager.register(TransactionTag)
+revisions.register(TransactionTag)
 
 
 @transaction.atomic()
@@ -58,7 +58,7 @@ class Transaction(AsylumModel):
         ordering = ['-stamp', 'reference']
 
 
-revisions.default_revision_manager.register(Transaction)
+revisions.register(Transaction)
 
 
 class RecurringTransaction(AsylumModel):
@@ -177,4 +177,4 @@ class RecurringTransaction(AsylumModel):
         ordering = ['owner__lname', 'owner__fname', '-start']
 
 
-revisions.default_revision_manager.register(RecurringTransaction)
+revisions.register(RecurringTransaction)
