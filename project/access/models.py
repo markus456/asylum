@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy as _
-from django_markdown.models import MarkdownField
+from markdownx.models import MarkdownxField
 from reversion import revisions
 
 from asylum.models import AsylumModel
@@ -68,7 +68,7 @@ revisions.default_revision_manager.register(AccessType)
 class Grant(AsylumModel):
     owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='access_granted', on_delete=models.CASCADE)
     atype = models.ForeignKey(AccessType, related_name='+', verbose_name=_("Access"), on_delete=models.CASCADE)
-    notes = MarkdownField(verbose_name=_("Notes"), blank=True)
+    notes = MarkdownxField(verbose_name=_("Notes"), blank=True)
 
     def __str__(self):
         return _("%s for %s") % (self.atype, self.owner)
@@ -90,7 +90,7 @@ class NonMemberToken(AsylumModel):
     revoked = models.BooleanField(_("Revoked"), default=False)
     grants = models.ManyToManyField(AccessType, blank=True, verbose_name=_("Access"), related_name='+')
     contact = models.CharField(_("Contact"), max_length=200, blank=False)
-    notes = MarkdownField(verbose_name=_("Notes"), blank=True)
+    notes = MarkdownxField(verbose_name=_("Notes"), blank=True)
 
     @property
     def acl(self):

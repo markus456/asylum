@@ -51,7 +51,7 @@ THIRD_PARTY_APPS = (
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_markdown',
+    'markdownx',
     'django_jinja',
 )
 

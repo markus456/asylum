@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^api/members/sinlist', members.rest.MemberSinView.as_view()),
     url(r'^api-auth/get-token/', authtoken_views.obtain_auth_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url('^markdown/', include('django_markdown.urls')),
+    url('^markdown/', include('markdownx.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

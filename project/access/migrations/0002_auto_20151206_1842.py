@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import django_markdown.models
+import markdownx.models
 from django.db import migrations, models
 
 import asylum.mixins
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('value', models.CharField(max_length=200, verbose_name='Token value')),
                 ('revoked', models.BooleanField(verbose_name='Revoked', default=False)),
                 ('contact', models.CharField(max_length=200, verbose_name='Contact')),
-                ('notes', django_markdown.models.MarkdownField(verbose_name='Notes', blank=True)),
+                ('notes', markdownx.models.MarkdownxField(verbose_name='Notes', blank=True)),
             ],
             options={
                 'verbose_name_plural': 'Non-member tokens',
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='grant',
             name='notes',
-            field=django_markdown.models.MarkdownField(verbose_name='Notes', blank=True),
+            field=markdownx.models.MarkdownxField(verbose_name='Notes', blank=True),
         ),
         migrations.AddField(
             model_name='nonmembertoken',
