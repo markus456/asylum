@@ -1,12 +1,12 @@
 # Local development dependencies go here
 -r base.txt
 
-django-extensions==1.7.5
+django-extensions==3.1.1
 # django-debug-toolbar that works with Django 1.5+
-django-debug-toolbar==1.6
+django-debug-toolbar==3.2
 
 # improved REPL
-ipdb==0.10.1
+ipdb==0.13.4
 
 # the "python3 compatible" package is broken ATM
 # Required by maildump. Need to pin dependency to gevent beta to be Python 3-compatible.
@@ -15,16 +15,16 @@ ipdb==0.10.1
 #maildump==0.5.1
 
 # Code quality
-autopep8==1.4.3
-flake8==3.6.0
+autopep8==1.5.5
+flake8==3.8.4
 flake8-polyfill==1.0.2
-isort==4.3.4
+isort==5.7.0
 pep8==1.7.1
-pep8-naming==0.7.0
-pycodestyle==2.4.0
+pep8-naming==0.11.1
+pycodestyle==2.6.0
 
-factory-boy==2.8.1
-pytest==4.2.0
-pytest-django==3.4.5
+factory-boy==3.2.0
+pytest==6.2.2
+pytest-django==4.1.0
 
 loremipsum==1.0.5
