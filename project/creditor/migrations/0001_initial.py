@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('stamp', models.DateTimeField(auto_now_add=True, verbose_name='Datetime')),
                 ('reference', models.CharField(verbose_name='Reference', max_length=200)),
                 ('amount', models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Amount')),
-                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='creditor_transactions')),
+                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='creditor_transactions', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='tag',
-            field=models.ForeignKey(null=True, blank=True, verbose_name='Tag', to='creditor.TransactionTag'),
+            field=models.ForeignKey(null=True, blank=True, verbose_name='Tag', to='creditor.TransactionTag', on_delete=models.CASCADE),
         ),
     ]

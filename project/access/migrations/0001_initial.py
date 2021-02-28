@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
             name='Grant',
             fields=[
                 ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
-                ('atype', models.ForeignKey(to='access.AccessType', verbose_name='Access', related_name='+')),
-                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='access_granted')),
+                ('atype', models.ForeignKey(to='access.AccessType', verbose_name='Access', related_name='+', on_delete=models.CASCADE)),
+                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='access_granted', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('label', models.CharField(blank=True, verbose_name='Label', max_length=200)),
                 ('value', models.CharField(verbose_name='Token value', max_length=200)),
                 ('revoked', models.BooleanField(default=False, verbose_name='Revoked')),
-                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='access_tokens')),
+                ('owner', models.ForeignKey(to='members.Member', verbose_name='Member', related_name='access_tokens', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -48,6 +48,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='token',
             name='ttype',
-            field=models.ForeignKey(to='access.TokenType', verbose_name='Token type', related_name='+'),
+            field=models.ForeignKey(to='access.TokenType', verbose_name='Token type', related_name='+', on_delete=models.CASCADE),
         ),
     ]

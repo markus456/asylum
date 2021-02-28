@@ -59,6 +59,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='nonmembertoken',
             name='ttype',
-            field=models.ForeignKey(to='access.TokenType', related_name='+', verbose_name='Token type'),
+            field=models.ForeignKey(to='access.TokenType', related_name='+', verbose_name='Token type', on_delete=models.CASCADE),
         ),
     ]

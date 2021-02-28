@@ -52,6 +52,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membernote',
             name='member',
-            field=models.ForeignKey(verbose_name='Member', blank=True, null=True, to='members.Member', related_name='notes'),
+            field=models.ForeignKey(verbose_name='Member', blank=True, null=True, to='members.Member', related_name='notes', on_delete=models.CASCADE),
         ),
     ]

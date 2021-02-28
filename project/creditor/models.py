@@ -41,9 +41,9 @@ def generate_transaction_id():
 
 class Transaction(AsylumModel):
     stamp = models.DateTimeField(_("Datetime"), default=timezone.now, db_index=True)
-    tag = models.ForeignKey(TransactionTag, blank=True, null=True, verbose_name=_("Tag"), related_name='+')
+    tag = models.ForeignKey(TransactionTag, blank=True, null=True, verbose_name=_("Tag"), related_name='+', on_delete=models.CASCADE)
     reference = models.CharField(_("Reference"), max_length=200, blank=False, db_index=True)
-    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='creditor_transactions')
+    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='creditor_transactions', on_delete=models.CASCADE)
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=6, decimal_places=2, blank=False, null=False)
     unique_id = models.CharField(_("Unique transaction id"), max_length=64, blank=False, default=generate_transaction_id, unique=True)
 
@@ -82,8 +82,8 @@ class RecurringTransaction(AsylumModel):
 
     label = models.CharField(_("Label"), max_length=200, blank=True)
     rtype = models.PositiveSmallIntegerField(verbose_name=_("Recurrence type"), choices=RTYPE_CHOICES)
-    tag = models.ForeignKey(TransactionTag, blank=False, verbose_name=_("Tag"), related_name='+')
-    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='+')
+    tag = models.ForeignKey(TransactionTag, blank=False, verbose_name=_("Tag"), related_name='+', on_delete=models.CASCADE)
+    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='+', on_delete=models.CASCADE)
     amount = models.DecimalField(verbose_name=_("Amount"), max_digits=6, decimal_places=2, blank=False, null=False)
 
     def __str__(self):
