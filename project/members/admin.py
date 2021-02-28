@@ -6,7 +6,7 @@ from creditor.models import RecurringTransaction
 from django import forms
 from django.contrib import admin
 from django.db import models
-from django.utils.functional import allow_lazy, lazy
+from django.utils.functional import keep_lazy as allow_lazy, lazy
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from reversion.admin import VersionAdmin

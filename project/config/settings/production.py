@@ -38,9 +38,9 @@ RAVEN_MIDDLEWARE = ('raven.contrib.django.raven_compat.middleware.Sentry404Catch
                     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',)
 
 if env.bool('USE_SENTRY', True):
-    MIDDLEWARE_CLASSES = SECURITY_MIDDLEWARE + RAVEN_MIDDLEWARE + MIDDLEWARE_CLASSES
+    MIDDLEWARE = SECURITY_MIDDLEWARE + RAVEN_MIDDLEWARE + MIDDLEWARE
 else:
-    MIDDLEWARE_CLASSES = SECURITY_MIDDLEWARE + MIDDLEWARE_CLASSES
+    MIDDLEWARE = SECURITY_MIDDLEWARE + MIDDLEWARE
 
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60

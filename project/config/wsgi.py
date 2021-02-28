@@ -18,7 +18,6 @@ import os
 
 import environ
 from django.core.wsgi import get_wsgi_application
-from whitenoise.django import DjangoWhiteNoise
 
 ROOT_DIR = environ.Path(__file__) - 2  # (/a/b/myfile.py - 3 = /)
 env = environ.Env()
@@ -41,9 +40,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 # setting points here.
 application = get_wsgi_application()
 
-# Use Whitenoise to serve static files
-# See: https://whitenoise.readthedocs.org/
-application = DjangoWhiteNoise(application)
 if env.bool('USE_SENTRY', False):
     application = Sentry(application)
 
