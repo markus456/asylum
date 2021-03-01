@@ -149,7 +149,7 @@ class MembershipApplication(MemberCommon):
                 h.on_approving(self, m)
             m.save()
             if set_mtypes:
-                m.mtypes = set_mtypes
+                m.mtypes.set(set_mtypes)
                 m.save()
             if self.notes:
                 n = MemberNote()
