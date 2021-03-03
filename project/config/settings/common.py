@@ -51,6 +51,7 @@ THIRD_PARTY_APPS = (
     'reversion',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_filters',
     'markdownx',
     'django_jinja',
 )
@@ -299,7 +300,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework_filters.backends.DjangoFilterBackend',
+        'rest_framework_filters.backends.RestFrameworkFilterBackend',
     ],
 }
 
