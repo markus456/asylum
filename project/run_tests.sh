@@ -5,4 +5,9 @@ sudo -u postgres service postgresql start
 export PGPASSWORD=asylum; while true; do psql -q asylum -c 'SELECT 1;' 1>/dev/null 2>&1 ; if [ "$?" -ne "0" ]; then echo "Waiting for psql"; sleep 1; else break; fi; done
 sudo -u postgres psql -U postgres -d postgres -c "alter user asylum createdb;"
 ./manage.py migrate
+
+# This fixes warnings about the missing STATIC_ROOT directory at /opt/asylum/staticfiles. Since it doesn't exist and isn't created by anything, we create it here.
+# TODO: The STATIC_ROOT should probably point to something that actually exists.
+mkdir staticfiles
+
 py.test -v $*
