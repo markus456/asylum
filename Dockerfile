@@ -72,7 +72,7 @@ RUN chown -R asylum:asylum /opt/asylum/
 # Build localisations
 USER asylum
 RUN . ../asylum-venv/bin/activate && \
-    for app in locale */locale; do (cd $(dirname $app) && ../manage.py compilemessages ); done
+    for app in $(find . -name 'locale' -type d); do (cd $app/.. && ../manage.py compilemessages ); done
 
 # Run migrate and create admin user
 USER asylum
