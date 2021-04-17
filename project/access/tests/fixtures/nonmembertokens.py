@@ -5,20 +5,33 @@ import factory.django
 import factory.fuzzy
 from access.models import AccessType, TokenType
 from members.models import MemberCommon
-from members.tests.fixtures.memberlikes import firstnames, generate_email, lastnames
+from members.tests.fixtures.memberlikes import firstnames, lastnames
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.template.defaultfilters import slugify
 
 from asylum.tests.utils import FuzzyLoremipsum
 from asylum.utils import get_random_objects
 
 from .tokens import generate_value
 
+def generate_contact_email(fname, lname):
+    try:
+        addr = '%s.%s@hacklab.hax' % (
+            slugify(fname),
+            slugify(lname)
+        )
+        validate_email(addr)
+        return addr
+    except ValidationError as e:
+        return 'member_%d_%d@hacklab.hax' % (generate_unique_memberid(), random.randint(10, 2 ** 16))
+
 
 def generate_contact(x):
-    tmp = MemberCommon()
-    tmp.fname = random.choice(firstnames)
-    tmp.lname = random.choice(lastnames)
-    tmp.email = generate_email(tmp)
-    return "%s, %s <%s>" % (tmp.lname, tmp.fname, tmp.email)
+    fname = random.choice(lastnames)
+    lname = random.choice(firstnames)
+    email = generate_contact_email(fname, lname)
+    return "%s, %s <%s>" % (lname, fname, email)
 
 
 class NonMemberTokenFactory(factory.django.DjangoModelFactory):

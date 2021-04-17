@@ -311,3 +311,6 @@ SETTINGS_EXPORT = [
     'ORGANIZATION_NAME',
     'APPLICATION_RULES_URL',
 ]
+
+# Required by Django 3.2 if no explicit primary key is defined
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
