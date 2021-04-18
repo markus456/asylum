@@ -8,11 +8,8 @@ django-debug-toolbar~=3.2.1
 # improved REPL
 ipdb==0.13.7
 
-# the "python3 compatible" package is broken ATM
-# Required by maildump. Need to pin dependency to gevent beta to be Python 3-compatible.
-#gevent==1.0.2
 # Enables better email testing
-#maildump==0.5.1
+maildump==1.0
 
 # Code quality
 autopep8==1.5.6
