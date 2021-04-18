@@ -1,7 +1,7 @@
 # Bleeding edge Django
 Django==3.2
 Jinja2==2.11.3
-django-jinja==2.7.0
+django-jinja~=2.7.0
 MarkupSafe==1.1.1
 
 # Configuration
@@ -35,9 +35,9 @@ django-bootstrap3==15.0.0
 django-reversion==3.0.9
 djangorestframework==3.12.4
 Markdown==3.3.4
-django-filter==2.4.0
+django-filter~=2.4.0
 djangorestframework-filters==1.0.0.dev2
-django-markdownx==3.0.1
+django-markdownx~=3.0.1
 django-settings-export==1.2.1
 python-dateutil==2.7.5
 holviapi==0.6.20190131
