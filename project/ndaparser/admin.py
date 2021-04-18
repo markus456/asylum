@@ -2,13 +2,13 @@
 from creditor.admin import TransactionAdmin
 from creditor.handlers import AbstractTransaction
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from asylum.utils import get_handler_instance
 
@@ -26,7 +26,7 @@ class NordeaUploadMixin(object):
         opts = self.model._meta
         info = opts.app_label, opts.model_name,
         my_urls = [
-            url("^nordea/upload/$", admin_site.admin_view(self.upload_view), name='%s_%s_ndaupload' % info),
+            re_path("^nordea/upload/$", admin_site.admin_view(self.upload_view), name='%s_%s_ndaupload' % info),
         ]
         return my_urls + urls
 

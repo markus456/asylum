@@ -8,7 +8,7 @@ import holviapi
 from creditor.handlers import BaseRecurringTransactionsHandler, BaseTransactionHandler
 from creditor.models import RecurringTransaction, Transaction, TransactionTag
 from django.core.mail import EmailMessage
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from holviapp.utils import api_configured, get_invoiceapi
 from members.handlers import BaseApplicationHandler, BaseMemberHandler
 

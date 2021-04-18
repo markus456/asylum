@@ -7,7 +7,7 @@ from access.utils import resolve_acl
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from markdownx.models import MarkdownxField
 from reversion import revisions
 

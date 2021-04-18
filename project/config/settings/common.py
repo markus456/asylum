@@ -16,7 +16,7 @@ import django.template.defaultfilters
 import environ
 # Monkeypatch djangos own slugify with Mozilla teams Unicode-aware one
 import slugify as unicodeslugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 ROOT_DIR = environ.Path(__file__) - 3  # (/a/b/myfile.py - 3 = /)
 APPS_DIR = ROOT_DIR.path('asylum')

@@ -5,7 +5,7 @@ import slugify as unicodeslugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from asylum.models import AsylumModel
 

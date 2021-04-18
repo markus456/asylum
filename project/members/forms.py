@@ -3,7 +3,7 @@ from creditor.models import RecurringTransaction
 from django import forms
 from django.conf import settings
 from django.utils.functional import keep_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import MembershipApplication
 

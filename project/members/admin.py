@@ -8,7 +8,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.functional import lazy
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from .forms import RTInlineForm
