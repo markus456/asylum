@@ -13,6 +13,13 @@ from .parser import parseLine
 HELSINKI = pytz.timezone('Europe/Helsinki')
 
 
+class ImportTransaction(AbstractTransaction):
+
+    class Meta:
+        abstract = False
+        managed = False
+
+
 class NDAImporter(object):
 
     def __init__(self, stream):
@@ -26,7 +33,7 @@ class NDAImporter(object):
             nt = parseLine(line)
             if nt is not None:
                 if transactions_handler:
-                    at = AbstractTransaction()
+                    at = ImportTransaction()
                     at.name = str(nt.name)
                     at.reference = str(nt.referenceNumber)
                     at.amount = nt.amount  # We know this is Decimal instance
