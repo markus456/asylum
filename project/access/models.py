@@ -24,8 +24,8 @@ revisions.default_revision_manager.register(TokenType)
 
 class Token(AsylumModel):
     label = models.CharField(_("Label"), max_length=200, blank=True)
-    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='access_tokens')
-    ttype = models.ForeignKey(TokenType, blank=False, verbose_name=_("Token type"), related_name='+')
+    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='access_tokens', on_delete=models.CASCADE)
+    ttype = models.ForeignKey(TokenType, blank=False, verbose_name=_("Token type"), related_name='+', on_delete=models.CASCADE)
     value = models.CharField(_("Token value"), max_length=200, blank=False)
     revoked = models.BooleanField(_("Revoked"), default=False)
 
@@ -66,8 +66,8 @@ revisions.default_revision_manager.register(AccessType)
 
 
 class Grant(AsylumModel):
-    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='access_granted')
-    atype = models.ForeignKey(AccessType, related_name='+', verbose_name=_("Access"))
+    owner = models.ForeignKey('members.Member', blank=False, verbose_name=_("Member"), related_name='access_granted', on_delete=models.CASCADE)
+    atype = models.ForeignKey(AccessType, related_name='+', verbose_name=_("Access"), on_delete=models.CASCADE)
     notes = MarkdownField(verbose_name=_("Notes"), blank=True)
 
     def __str__(self):
@@ -85,7 +85,7 @@ revisions.default_revision_manager.register(Grant)
 
 class NonMemberToken(AsylumModel):
     label = models.CharField(_("Label"), max_length=200, blank=True)
-    ttype = models.ForeignKey(TokenType, blank=False, verbose_name=_("Token type"), related_name='+')
+    ttype = models.ForeignKey(TokenType, blank=False, verbose_name=_("Token type"), related_name='+', on_delete=models.CASCADE)
     value = models.CharField(_("Token value"), max_length=200, blank=False)
     revoked = models.BooleanField(_("Revoked"), default=False)
     grants = models.ManyToManyField(AccessType, blank=True, verbose_name=_("Access"), related_name='+')
