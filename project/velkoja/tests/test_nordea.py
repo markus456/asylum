@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
+import pytz
+from django.utils import timezone
 
 import pytest
 from creditor.models import TransactionTag
@@ -9,6 +11,7 @@ from django.conf import settings
 from members.tests.fixtures.memberlikes import MemberFactory
 from velkoja.nordeachecker import NordeaOverdueInvoicesHandler
 
+UTC = pytz.utc
 
 @pytest.mark.django_db
 @pytest.fixture
@@ -34,14 +37,14 @@ def uniform_transactions_zerosum(basic_setup):
                 reference=refno,
                 amount=-amount,
                 tag=tag,
-                stamp=datetime.datetime.combine(debit_date, datetime.datetime.min.time())
+                stamp=UTC.localize(datetime.datetime.combine(debit_date, datetime.datetime.min.time()))
             )
             credit = TransactionFactory(
                 owner=member,
                 reference=refno,
                 amount=amount,
                 tag=tag,
-                stamp=datetime.datetime.combine(credit_date, datetime.datetime.min.time())
+                stamp=UTC.localize(datetime.datetime.combine(credit_date, datetime.datetime.min.time()))
             )
     return (member, cutoff)
 
@@ -61,7 +64,7 @@ def nonuniform_transactions_zerosum(basic_setup):
                 reference=refno,
                 amount=-amount,
                 tag=tag,
-                stamp=datetime.datetime.combine(debit_date, datetime.datetime.min.time())
+                stamp=UTC.localize(datetime.datetime.combine(debit_date, datetime.datetime.min.time()))
             )
         credit_date = cutoff - datetime.timedelta(days=months / 3 * 30)
         first_amount = amount * (months / 3)
@@ -70,14 +73,14 @@ def nonuniform_transactions_zerosum(basic_setup):
             reference=refno,
             amount=first_amount,
             tag=tag,
-            stamp=datetime.datetime.combine(credit_date, datetime.datetime.min.time())
+            stamp=UTC.localize(datetime.datetime.combine(credit_date, datetime.datetime.min.time()))
         )
         credit2 = TransactionFactory(
             owner=member,
             reference=refno,
             amount=months * amount - first_amount,
             tag=tag,
-            stamp=datetime.datetime.combine(cutoff, datetime.datetime.min.time())
+            stamp=UTC.localize(datetime.datetime.combine(cutoff, datetime.datetime.min.time()))
         )
 
     return (member, cutoff)
@@ -110,7 +113,7 @@ def test_nonuniform_adjustment_zerosum(nonuniform_transactions_zerosum):
         reference=newest.reference,
         amount=newest.amount,
         tag=newest.tag,
-        stamp=cutoff + datetime.timedelta(days=20)
+        stamp=UTC.localize(datetime.datetime.combine(cutoff, datetime.datetime.min.time()) + datetime.timedelta(days=20))
     )
 
     # First check we have overdue without tag filter
@@ -146,7 +149,7 @@ def test_uniform_no_overdue_after_cutoff(uniform_transactions_zerosum):
         reference=templ.reference,
         amount=templ.amount,
         tag=templ.tag,
-        stamp=cutoff + datetime.timedelta(days=20)
+        stamp=UTC.localize(datetime.datetime.combine(cutoff, datetime.datetime.min.time()) + datetime.timedelta(days=20))
     )
     assert member.creditor_transactions.count() > old_count
     assert member.credit < 0

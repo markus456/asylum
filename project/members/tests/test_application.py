@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from members.models import Member
 from members.tests.fixtures.memberlikes import MemberFactory, MembershipApplicationFactory
 from members.tests.fixtures.types import MemberTypeFactory

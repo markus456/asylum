@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name="about"),
 
     # Django Admin, use {% url 'admin:index' %}
-    url(settings.ADMIN_URL, include(admin.site.urls)),
+    url(settings.ADMIN_URL, admin.site.urls),
 
     # Your stuff: custom urls includes go here
     url(r'^members/', include('members.urls')),
@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^api/members/sinlist', members.rest.MemberSinView.as_view()),
     url(r'^api-auth/get-token/', authtoken_views.obtain_auth_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url('^markdown/', include('django_markdown.urls')),
+    url('^markdownx/', include('markdownx.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

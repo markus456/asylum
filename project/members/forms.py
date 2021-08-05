@@ -2,18 +2,15 @@
 from creditor.models import RecurringTransaction
 from django import forms
 from django.conf import settings
-from django.utils.functional import allow_lazy, lazy
-from django.utils.translation import ugettext
+from django.utils.functional import keep_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from .models import MembershipApplication
 
 
+@keep_lazy(str)
 def rules_accepted_proxy(msg):
     return msg % settings.APPLICATION_RULES_URL
-
-
-rules_accepted_proxy = allow_lazy(rules_accepted_proxy, str)
 
 
 class ApplicationForm(forms.ModelForm):

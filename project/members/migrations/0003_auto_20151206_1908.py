@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import django_markdown.models
+import markdownx.models
 from django.db import migrations, models
 
 import asylum.mixins
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
                 ('stamp', models.DateTimeField(verbose_name='Datetime', auto_now_add=True, db_index=True)),
-                ('notes', django_markdown.models.MarkdownField(verbose_name='Notes')),
+                ('notes', markdownx.models.MarkdownxField(verbose_name='Notes')),
             ],
             options={
                 'verbose_name': 'Note',
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membershipapplication',
             name='notes',
-            field=django_markdown.models.MarkdownField(verbose_name='Notes', blank=True),
+            field=markdownx.models.MarkdownxField(verbose_name='Notes', blank=True),
         ),
         migrations.AddField(
             model_name='membernote',

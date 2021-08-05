@@ -32,15 +32,15 @@ INSTALLED_APPS += ("djangosecure", )
 # See https://docs.getsentry.com/hosted/clients/python/integrations/django/
 INSTALLED_APPS += ('raven.contrib.django.raven_compat', )
 SECURITY_MIDDLEWARE = (
-    'djangosecure.middleware.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 )
 RAVEN_MIDDLEWARE = ('raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
                     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',)
 
 if env.bool('USE_SENTRY', True):
-    MIDDLEWARE_CLASSES = SECURITY_MIDDLEWARE + RAVEN_MIDDLEWARE + MIDDLEWARE_CLASSES
+    MIDDLEWARE = SECURITY_MIDDLEWARE + RAVEN_MIDDLEWARE + MIDDLEWARE
 else:
-    MIDDLEWARE_CLASSES = SECURITY_MIDDLEWARE + MIDDLEWARE_CLASSES
+    MIDDLEWARE = SECURITY_MIDDLEWARE + MIDDLEWARE
 
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60

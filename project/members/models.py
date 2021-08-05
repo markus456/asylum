@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_markdown.models import MarkdownField
+from markdownx.models import MarkdownxField
 from reversion import revisions
 
 from asylum.models import AsylumModel
@@ -76,7 +76,7 @@ class MemberType(AsylumModel):
         verbose_name_plural = _('Member Types')
 
 
-revisions.default_revision_manager.register(MemberType)
+revisions.register(MemberType)
 
 
 class Member(MemberCommon):
@@ -101,7 +101,7 @@ class Member(MemberCommon):
         verbose_name_plural = _('Members')
 
 
-revisions.default_revision_manager.register(Member)
+revisions.register(Member)
 
 
 class MembershipApplicationTag(AsylumModel):
@@ -115,13 +115,13 @@ class MembershipApplicationTag(AsylumModel):
         verbose_name_plural = _('Membership Application Tags')
 
 
-revisions.default_revision_manager.register(MembershipApplicationTag)
+revisions.register(MembershipApplicationTag)
 
 
 class MembershipApplication(MemberCommon):
     received = models.DateField(default=timezone.now)
     tags = models.ManyToManyField(MembershipApplicationTag, related_name='+', verbose_name=_("Application tags"), blank=True)
-    notes = MarkdownField(verbose_name=_("Notes"), blank=True)
+    notes = MarkdownxField(verbose_name=_("Notes"), blank=True)
 
     @call_saves('MEMBERAPPLICATION_CALLBACKS_HANDLER')
     def save(self, *args, **kwargs):
@@ -149,7 +149,7 @@ class MembershipApplication(MemberCommon):
                 h.on_approving(self, m)
             m.save()
             if set_mtypes:
-                m.mtypes = set_mtypes
+                m.mtypes.set(set_mtypes)
                 m.save()
             if self.notes:
                 n = MemberNote()
@@ -165,12 +165,12 @@ class MembershipApplication(MemberCommon):
         verbose_name_plural = _('Membership Applications')
 
 
-revisions.default_revision_manager.register(MembershipApplication)
+revisions.register(MembershipApplication)
 
 
 class MemberNote(AsylumModel):
     stamp = models.DateTimeField(_("Datetime"), default=timezone.now, db_index=True)
-    notes = MarkdownField(verbose_name=_("Notes"), blank=False)
+    notes = MarkdownxField(verbose_name=_("Notes"), blank=False)
     member = models.ForeignKey(Member, verbose_name=_("Member"), blank=True, null=True, on_delete=models.CASCADE, related_name='notes')
 
     class Meta:
@@ -182,4 +182,4 @@ class MemberNote(AsylumModel):
         return _("Notes about %s on %s") % (self.member, self.stamp)
 
 
-revisions.default_revision_manager.register(MemberNote)
+revisions.register(MemberNote)

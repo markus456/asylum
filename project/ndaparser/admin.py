@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
