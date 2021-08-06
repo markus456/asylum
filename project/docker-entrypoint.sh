@@ -2,9 +2,16 @@
 
 set -e
 
-if [ ! -f .env ]; then
-  echo "DATABASE_URL=postgres://asylum:asylum@localhost/asylum" > .env
-fi
+# Always overwrite the .env file, it's created during the image build and
+# doesn't have the required handlers.
+cat <<EOF > /opt/asylum/.env
+DATABASE_URL=postgres://asylum:asylum@localhost/asylum
+MEMBERAPPLICATION_CALLBACKS_HANDLER=hhlcallback.handlers.ApplicationHandler
+RECURRINGTRANSACTIONS_CALLBACKS_HANDLER=hhlcallback.handlers.RecurringTransactionsHolviHandler
+TRANSACTION_CALLBACKS_HANDLER=hhlcallback.handlers.TransactionHandler
+NORDEA_BARCODE_IBAN=FI 21 123456 0000078 5
+SLACK_INVITE_LINK=https://www.example.com/this-is-a-fake-slack-invite
+EOF
 
 VENV_DIR_PATH=/opt/asylum-venv/
 

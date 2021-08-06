@@ -43,6 +43,10 @@
                         <a  class="btn btn-default" href="{% url opts|admin_urlname:'changelist' %}">{% trans "Cancel" %}</a>
                     </div>
                 </form>
+
+                {% if error %}
+                     <p> <b>ERROR:</b> {{error}} </p>
+                {% endif %}
             {% endif %}
         {% endif %}
         </div>

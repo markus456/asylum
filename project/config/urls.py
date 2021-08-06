@@ -5,7 +5,8 @@ import access.rest
 import creditor.rest
 import members.rest
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import re_path
+from django.conf.urls import include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views import defaults as default_views
@@ -28,35 +29,35 @@ router.register(r'access/grants',       access.rest.GrantViewSet)
 
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
-    url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name="about"),
+    re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
+    re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name="about"),
 
     # Django Admin, use {% url 'admin:index' %}
-    url(settings.ADMIN_URL, admin.site.urls),
+    re_path(settings.ADMIN_URL, admin.site.urls),
 
     # Your stuff: custom urls includes go here
-    url(r'^members/', include('members.urls')),
-    url(r'^velkoja/', include('velkoja.urls')),
+    re_path(r'^members/', include('members.urls')),
+    re_path(r'^velkoja/', include('velkoja.urls')),
 
-    url(r'^api/', include(router.urls)),
-    url(r'^api/members/sinlist', members.rest.MemberSinView.as_view()),
-    url(r'^api-auth/get-token/', authtoken_views.obtain_auth_token),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url('^markdownx/', include('markdownx.urls')),
+    re_path(r'^api/', include(router.urls)),
+    re_path(r'^api/members/sinlist', members.rest.MemberSinView.as_view()),
+    re_path(r'^api-auth/get-token/', authtoken_views.obtain_auth_token),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path('^markdownx/', include('markdownx.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
     # these url in browser to see how these error pages look like.
     urlpatterns += [
-        url(r'^400/$', default_views.bad_request),
-        url(r'^403/$', default_views.permission_denied),
-        url(r'^404/$', default_views.page_not_found),
-        url(r'^500/$', default_views.server_error),
+        re_path(r'^400/$', default_views.bad_request),
+        re_path(r'^403/$', default_views.permission_denied),
+        re_path(r'^404/$', default_views.page_not_found),
+        re_path(r'^500/$', default_views.server_error),
     ]
 
     # This is required by Django Debug Toolbar
     import debug_toolbar
     urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        re_path(r'^__debug__/', include(debug_toolbar.urls)),
     ]

@@ -10,7 +10,7 @@ from creditor.models import Transaction, TransactionTag
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from holviapi.utils import barcode as bank_barcode
 from holviapp.utils import get_connection as get_holvi_connection
 from members.handlers import BaseApplicationHandler, BaseMemberHandler

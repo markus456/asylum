@@ -2,8 +2,9 @@
 import os
 import tempfile
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
+from django.core.exceptions import ValidationError
 
 from .forms import UploadForm
 from .importer import NDAImporter
@@ -46,15 +47,19 @@ class NordeaUploadView(FormView):
                 if nt.timestamp > last_stamp:
                     last_stamp = nt.timestamp
 
-        UploadedTransaction(
-            last_transaction=last_stamp,
-            file=self.request.FILES['ndafile'],
-            user=self.request.user
-        ).save()
+        try:
+            UploadedTransaction(
+                last_transaction=last_stamp,
+                file=self.request.FILES['ndafile'],
+                user=self.request.user
+            ).save()
+
+            context['title'] = _("Transactions uploaded")
+            context['transactions'] = transactions
+        except ValidationError:
+            context['error'] = _("Invalid NDA document")
 
         # Done with the temp file, get rid of it
         os.unlink(tmp.name)
 
-        context['title'] = _("Transactions uploaded")
-        context['transactions'] = transactions
         return self.render_to_response(context)
