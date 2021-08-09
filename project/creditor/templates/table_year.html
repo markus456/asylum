@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load i18n static aggregation_utils %}
+
+{% block page_title %}Stats{% endblock page_title %}
+
+{% block extralink %}<link href="{% static 'css/stats.css' %}" rel="stylesheet">{% endblock extralink %}
+
+
+{% block extrastyle %}
+<style>
+@media print
+{    
+   .no-print, .no-print *
+   {
+      display: none !important;
+   }
+}
+</style>
+{% endblock %}
+
+
+{% block title %} {{ site_title|default:_('Summary')|add:' '|add:year }}{% endblock %}
+
+{% block hero %}
+{% endblock hero %}
+
+
+{% block content %}
+
+<div class="stats_main">
+{% include "stats_right.html" %}
+<div class="stats_left">
+
+<h1>{{ year }} {{ tag.label }}</h1>
+
+<h3>{% trans "Summary" %}</h3>
+
+<table class="stats_table">
+<tr>
+<th>{% trans "Month" %}</th>
+<th>{% trans "Debit" %}</th>
+<th>{% trans "Credit" %}</th>
+<th>{% trans "Balance" %}</th>
+</tr>
+{% for m in months %}
+<tr>
+<th><a href="{% url 'table_m' year=year month=m %}{{ tag_pk|create_tag_param }}">{{ m }}</a></th>
+<td><span style="color: green;">{{ income|month_sum_value:m|eur }}</span></td>
+<td><span style="color: red;">{{ receivables|month_sum_value:m|eur }}</span></td>
+<td><span style="{% if total|month_sum_value:m < 0 %}color: red;{% else %}color: green;{% endif %}">{{ total|month_sum_value:m|eur }}</span></td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+</div>
+
+{% endblock content %}
+
+
