@@ -8,7 +8,7 @@ from django.utils import timezone
 
 class TransactionMonthView(ListView):
    model = Transaction
-   template_name = "admin/table.html"
+   template_name = "table_month.html"
    
    param_tag = None
    def get_queryset(self):
@@ -41,7 +41,7 @@ class TransactionMonthView(ListView):
 
 class TransactionYearView(ListView):
    model = Transaction
-   template_name = "admin/table_year.html"
+   template_name = "table_year.html"
    
    param_year = timezone.now().year
    param_tag = None
