@@ -6,7 +6,7 @@ Seuraava(t) maksu(t) on kirjanpitomme mukaan maksamatta:
 
 {% for t in transactions %}
 Kuvaus: {{ t.transaction.tag }}
-Eräpäivä: {{ t.transaction.stamp.date.isoformat }}
+Alkuperäinen eräpäivä: {{ t.transaction.stamp.date.isoformat }}
 Viite: {{ t.transaction.reference }}
 Summa: {{ t.due }} EUR
 Tilinro: {{ t.iban }}
@@ -18,6 +18,8 @@ Virtuaaliviivakoodi: {{ t.barcode }}
 
 Mikäli uskot että tässä on jokin virhe, ole hyvä ja ota yhteyttä hallitukseen.
 
+Samalle tilille ja samalla viitenumerolla maksettavat tilisiirrot voi yhdistää yhdeksi yhteenlasketuksi maksuksi.
+
 --------------
 
 Hey,
@@ -26,7 +28,7 @@ According to our bookkeeping, the following payment(s) is/are unpaid:
 
 {% for t in transactions %}
 Description: {{ t.transaction.tag }}
-Due date: {{ t.transaction.stamp.date.isoformat }}
+Original due date: {{ t.transaction.stamp.date.isoformat }}
 Reference: {{ t.transaction.reference }}
 Amount due: {{ t.due }} EUR
 IBAN Account number: {{ t.iban }}
@@ -37,3 +39,5 @@ Virtual barcode: {{ t.barcode }}
 {% endfor %}
 
 If you think there is some error here, please contact the board.
+
+Payments with same account number and reference number can be combined into one summed transaction.
