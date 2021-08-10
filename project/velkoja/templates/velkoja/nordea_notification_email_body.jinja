@@ -2,34 +2,38 @@
 
 Hei,
 
-Seuraava maksu on kirjanpitomme mukaan maksamatta
+Seuraava(t) maksu(t) on kirjanpitomme mukaan maksamatta:
 
-Kuvaus: {{ transaction.tag }}
-Eräpäivä: {{ transaction.stamp.date.isoformat }}
-Viite: {{ transaction.reference }}
-Summa: {{ due }} EUR
-Tilinro: {{ iban }}
-
-{% if barcode %}
-Virtuaaliviivakoodi: {{ barcode }}
+{% for t in transactions %}
+Kuvaus: {{ t.transaction.tag }}
+Eräpäivä: {{ t.transaction.stamp.date.isoformat }}
+Viite: {{ t.transaction.reference }}
+Summa: {{ t.due }} EUR
+Tilinro: {{ t.iban }}
+{% if t.barcode %}
+Virtuaaliviivakoodi: {{ t.barcode }}
 {% endif %}
+====================================
+{% endfor %}
 
-Mikäli uskot että tässä on jokin virhe ole hyvä ja ota yhteyttä hallitukseen.
+Mikäli uskot että tässä on jokin virhe, ole hyvä ja ota yhteyttä hallitukseen.
 
 --------------
 
 Hey,
 
-According to our bookkeeping, the following payment is not made
+According to our bookkeeping, the following payment(s) is/are unpaid:
 
-Description: {{ transaction.tag }}
-Due date: {{ transaction.stamp.date.isoformat }}
-Reference: {{ transaction.reference }}
-Amount due: {{ due }} EUR
-IBAN Account number: {{ iban }}
-
-{% if barcode %}
-Virtual barcode: {{ barcode }}
+{% for t in transactions %}
+Description: {{ t.transaction.tag }}
+Due date: {{ t.transaction.stamp.date.isoformat }}
+Reference: {{ t.transaction.reference }}
+Amount due: {{ t.due }} EUR
+IBAN Account number: {{ t.iban }}
+{% if t.barcode %}
+Virtual barcode: {{ t.barcode }}
 {% endif %}
+====================================
+{% endfor %}
 
 If you think there is some error here, please contact the board.

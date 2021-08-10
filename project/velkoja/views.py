@@ -68,6 +68,7 @@ class NordeaEmailPreviewView(generic.TemplateView):
         render_context = Context({
             "transaction": transaction, "due": -transaction.amount, "barcode": barcode, "iban": barcode_iban,
         })
+        
         mail.subject = subject_template.render(render_context).strip()
         mail.body = body_template.render(render_context)
         ctx['email'] = mail

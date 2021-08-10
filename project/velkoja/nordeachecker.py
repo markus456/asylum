@@ -2,6 +2,7 @@
 import datetime
 import logging
 from decimal import Decimal
+from itertools import groupby
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -68,52 +69,76 @@ class NordeaOverdueInvoicesHandler(object):
                 ret.append(transaction)
 
         return ret
+   
+    def _transaction_context(self, transaction):
+        barcode_iban = settings.NORDEA_BARCODE_IBAN
+        # If we have already sent notification recently, do not sent one just yet
+    #    if NotificationSent.objects.filter(transaction_unique_id=transaction.unique_id).count():
+    #        notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
+    #        if (timezone.now() - notified.stamp).days < settings.HOLVI_NOTIFICATION_INTERVAL_DAYS:
+    #            return None
+    #        # Also check that we have new transactions since the notification
+    #        if UploadedTransaction.objects.count():
+    #            last_transaction = UploadedTransaction.objects.order_by('-last_transaction')[0].last_transaction
+    #            if last_transaction < notified.stamp.date():
+    #                return None
+        barcode = None
+        if barcode_iban:
+            barcode = bank_barcode(barcode_iban, transaction.reference, -transaction.amount)
+
+        return { "transaction": transaction, "due": -transaction.amount, "barcode": barcode, "iban": barcode_iban, }
+
+    def _transaction_notified(self, transaction, send):
+        try:
+            notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
+            notified.notification_no += 1
+        except NotificationSent.DoesNotExist:
+            notified = NotificationSent()
+            notified.transaction_unique_id = transaction.unique_id
+        notified.stamp = timezone.now()
+        notified.email = transaction.owner.email
+        if send:
+            notified.save()
+        return (notified, transaction)
 
     def process_overdue(self, send=False):
-        barcode_iban = settings.NORDEA_BARCODE_IBAN
         body_template = get_template('velkoja/nordea_notification_email_body.jinja')
         subject_template = get_template('velkoja/nordea_notification_email_subject.jinja')
         overdue = self.list_overdue()
+
+        grouped_overdue = groupby(overdue, lambda x: x.owner.email)
+
         ret = []
-        for transaction in overdue:
-            # If we have already sent notification recently, do not sent one just yet
-            if NotificationSent.objects.filter(transaction_unique_id=transaction.unique_id).count():
-                notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
-                if (timezone.now() - notified.stamp).days < settings.HOLVI_NOTIFICATION_INTERVAL_DAYS:
-                    continue
-                # Also check that we have new transactions since the notification
-                if UploadedTransaction.objects.count():
-                    last_transaction = UploadedTransaction.objects.order_by('-last_transaction')[0].last_transaction
-                    if last_transaction < notified.stamp.date():
-                        continue
+        for receiver, transactions in grouped_overdue:
+            render_context_transactions = [ self._transaction_context(x) for x in transactions ]
+            print(render_context_transactions)
+            #mail = EmailMessage()
+            #print(mail.__dict__)
+            #mail.from_email = settings.VELKOJA_FROM_EMAIL
+            #mail.to = receiver #[transaction.owner.email]
 
-            barcode = None
-            if barcode_iban:
-                barcode = bank_barcode(barcode_iban, transaction.reference, -transaction.amount)
+            #if settings.VELKOJA_CC_EMAIL:
+            #    mail.cc = [settings.VELKOJA_CC_EMAIL]
 
-            mail = EmailMessage()
-            mail.from_email = settings.VELKOJA_FROM_EMAIL
-            mail.to = [transaction.owner.email]
-            if settings.VELKOJA_CC_EMAIL:
-                mail.cc = [settings.VELKOJA_CC_EMAIL]
+            render_context = { "transactions": render_context_transactions , }
+            print(render_context)
+            #print(send)
+            #print(receiver)
 
-            render_context = {
-                "transaction": transaction, "due": -transaction.amount, "barcode": barcode, "iban": barcode_iban,
-            }
-            mail.subject = subject_template.render(render_context).strip()
-            mail.body = body_template.render(render_context)
+            #mail.subject = "testi" #subject_template.render(render_context).strip()
+            #mail.body = body_template.render(render_context)
+            #print(mail.__dict__)
+
+            mail = EmailMessage(
+                subject=subject_template.render(render_context).strip(),
+                body=body_template.render(render_context),
+                from_email=settings.VELKOJA_FROM_EMAIL,
+                to=[receiver],
+                cc=[settings.VELKOJA_CC_EMAIL] if settings.VELKOJA_CC_EMAIL else None)
+
             if send:
                 mail.send()
 
-            try:
-                notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
-                notified.notification_no += 1
-            except NotificationSent.DoesNotExist:
-                notified = NotificationSent()
-                notified.transaction_unique_id = transaction.unique_id
-            notified.stamp = timezone.now()
-            notified.email = transaction.owner.email
-            if send:
-                notified.save()
-            ret.append((notified, transaction))
+            ret += [ _transaction_notified(x, send) for x in transactions ]
+
         return ret
