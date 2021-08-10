@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from .models import RecurringTransaction, Transaction, TransactionTag
+from velkoja.models import NotificationSent
 
 
 class TransactionTagAdmin(VersionAdmin):
@@ -54,6 +55,7 @@ class TransactionAdmin(VersionAdmin):
         'tag',
         'reference',
         'owner',
+        'notified_no',
     )
     list_filter = (TagListFilter, AmountListFilter)
     search_fields = ['amount', 'reference', 'unique_id', 'owner__fname', 'owner__lname', 'owner__email']
@@ -71,6 +73,13 @@ class TransactionAdmin(VersionAdmin):
     amount_formatted.short_description = _("Amount")
     amount_formatted.admin_order_field = 'amount'
 
+    def notified_no(self, obj):
+        if obj.amount < 0:
+            notified = NotificationSent.objects.get(transaction_unique_id=obj.unique_id)
+            return notified.notification_no
+        return ''
+    notified_no.short_description = _('Sent notifications')
+    notified_no.admin_order_field = 'notified_no'
 
 class RTActiveListFilter(admin.SimpleListFilter):
     title = _("Active")
