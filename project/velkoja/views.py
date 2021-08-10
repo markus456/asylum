@@ -2,6 +2,7 @@
 from decimal import Decimal
 
 from creditor.models import Transaction
+from members.models import Member
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import Context
@@ -48,27 +49,44 @@ class HolviEmailPreviewView(generic.TemplateView):
         return ctx
 
 
+
 class NordeaEmailPreviewView(generic.TemplateView):
     template_name = "velkoja/nordea_preview.html"
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
+    def _create_test_nordea_transaction(self, amount, member):
         barcode_iban = settings.NORDEA_BARCODE_IBAN
-        body_template = get_template('velkoja/nordea_notification_email_body.jinja')
-        subject_template = get_template('velkoja/nordea_notification_email_subject.jinja')
 
-        transaction = Transaction.objects.exclude(**HOLVI_EXCLUDE_KWARGS).filter(amount__lt=0).order_by('-stamp')[0]
-
+        transaction = Transaction()
+        transaction.amount = Decimal(amount)
+        transaction.owner = member
+        transaction.reference = '12345'
+        
         barcode = None
         if barcode_iban:
             barcode = bank_barcode(barcode_iban, transaction.reference, -transaction.amount)
+        return [transaction, barcode, barcode_iban]
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        body_template = get_template('velkoja/nordea_notification_email_body.jinja')
+        subject_template = get_template('velkoja/nordea_notification_email_subject.jinja')
+
+        some_member = Member.objects.order_by('email')[0]
+        transactions = [ self._create_test_nordea_transaction(x, some_member) for x in [-20, -20, -10]]
+
+        print(transactions)
 
         mail = EmailMessage()
-        mail.to = [transaction.owner.email]
-        render_context = Context({
-            "transaction": transaction, "due": -transaction.amount, "barcode": barcode, "iban": barcode_iban,
-        })
-        
+        mail.to = [some_member.email]
+        render_context ={ "transactions":
+            [ { "transaction": x[0],
+                "due": -x[0].amount,
+                "barcode": x[1],
+                "iban": x[2], } for x in transactions ],
+            "total": -sum([x[0].amount for x in transactions]),
+        }
+
+        print(render_context)
         mail.subject = subject_template.render(render_context).strip()
         mail.body = body_template.render(render_context)
         ctx['email'] = mail

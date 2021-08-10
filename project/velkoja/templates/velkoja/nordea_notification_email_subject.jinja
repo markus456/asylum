@@ -1,1 +1,1 @@
-Helsinki Hacklab: {{ transactions|length }} Maksua suorittamatta | {{ transactions|length }} Payments not made
+{% if transactions|length == 1 %}Helsinki Hacklab: Maksu suorittamatta | Payment incomplete{% else %}Helsinki Hacklab: {{ transactions|length }} Maksua suorittamatta | {{ transactions|length }} Payments incomplete{% endif %}

@@ -4,6 +4,7 @@ Hei,
 
 Seuraava(t) maksu(t) on kirjanpitomme mukaan maksamatta:
 
+====================================
 {% for t in transactions %}
 Kuvaus: {{ t.transaction.tag }}
 Alkuperäinen eräpäivä: {{ t.transaction.stamp.date.isoformat }}
@@ -16,16 +17,19 @@ Virtuaaliviivakoodi: {{ t.barcode }}
 ====================================
 {% endfor %}
 
-Mikäli uskot että tässä on jokin virhe, ole hyvä ja ota yhteyttä hallitukseen.
+Mikäli uskot että tässä on jokin virhe, ole hyvä ja ota yhteyttä Helsinki Hacklab ry.:n hallitukseen.
 
 Samalle tilille ja samalla viitenumerolla maksettavat tilisiirrot voi yhdistää yhdeksi yhteenlasketuksi maksuksi.
 
---------------
+Yhteensä {{ total }} EUR
+
+--------- IN ENGLISH ---------
 
 Hey,
 
 According to our bookkeeping, the following payment(s) is/are unpaid:
 
+====================================
 {% for t in transactions %}
 Description: {{ t.transaction.tag }}
 Original due date: {{ t.transaction.stamp.date.isoformat }}
@@ -38,6 +42,8 @@ Virtual barcode: {{ t.barcode }}
 ====================================
 {% endfor %}
 
-If you think there is some error here, please contact the board.
+If you think there is some error here, please contact the board of Helsinki Hacklab ry.
 
 Payments with same account number and reference number can be combined into one summed transaction.
+
+In total {{ total }} EUR

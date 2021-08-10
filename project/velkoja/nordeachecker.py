@@ -122,7 +122,8 @@ class NordeaOverdueInvoicesHandler(object):
 
             render_context_transactions = [ self._transaction_context(x) for x in transactions ]
 
-            render_context = { "transactions": render_context_transactions , }
+            render_context = { "transactions": render_context_transactions , 
+                               "total": -sum([x.amount for x in transactions]), }
 
             mail = EmailMessage(
                 subject = subject_template.render(render_context).strip(),

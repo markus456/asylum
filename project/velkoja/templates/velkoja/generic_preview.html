@@ -6,7 +6,8 @@
 
 {% block content %}
 <div class="container-fluid">
-    <p>{% trans "Email subject" %}: <pre>{{ email.subject }}</pre></p>
-    <p>{% trans "Email body" %}: <pre>{{ email.body }}</pre></p>
+    <p>{% trans "Email To" %}: <pre>{{ email.to }}</pre></p>
+    <p>{% trans "Email Subject" %}: <pre>{{ email.subject }}</pre></p>
+    <p>{% trans "Email Body" %}: <pre>{{ email.body }}</pre></p>
 </div>
 {% endblock content %}
