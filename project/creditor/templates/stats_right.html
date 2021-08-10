@@ -1,0 +1,30 @@
+{% load i18n aggregation_utils %}
+
+
+<div class="stats_right">
+
+<h3>{% trans "Filter by transaction types" %}</h3>
+{% if month %}
+<span><a style="display: inline-block; margin-right: 10px;" href="{% url 'table_m' year=year month=month %}">{% trans "All types" %}</a></span>
+{% for t in tags %}
+<span class="stats_tag_options {% if t.pk == tag_pk %}stats_tag_selected{% endif %}"><a href="{% url 'table_m' year=year month=month %}{{ t.pk|create_tag_param }}">{{ t.label }}</a></span>
+{% endfor %}
+{% else %}
+<span><a style="display: inline-block; margin-right: 10px;" href="{% url 'table_y' year=year %}">{% trans "All types" %}</a></span>
+{% for t in tags %}
+<span class="stats_tag_options {% if t.pk == tag_pk %}stats_tag_selected{% endif %}"><a href="{% url 'table_y' year=year %}{{ t.pk|create_tag_param }}">{{ t.label }}</a></span>
+{% endfor %}
+{% endif %}
+
+<h3>{% trans "Month selection" %}</h3>
+<table class="stats_months_sel_table">
+{% for y in years %}
+<tr>
+<th><a href="{% url 'table_y' year=y %}{{ tag_pk|create_tag_param }}">{{ y }}</a></th>
+{% for m in months %}
+<td><a href="{% url 'table_m' year=y month=m %}{{ tag_pk|create_tag_param }}">{{ m }}</a></td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+</div>

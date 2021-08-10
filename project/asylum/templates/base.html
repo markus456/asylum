@@ -11,6 +11,7 @@
     
         <title>{% block page_title %}Hello world!{% endblock page_title %}</title>
         <link href="{% static 'css/asylum.css' %}" rel="stylesheet">
+        {% block extralink %}{% endblock extralink %}
     </head>
 
     <body class="{% block body_class %}{% endblock body_class %}">

@@ -38,6 +38,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     re_path(r'^members/', include('members.urls')),
     re_path(r'^velkoja/', include('velkoja.urls')),
+    re_path(r'^creditor/', include('creditor.urls')),
 
     re_path(r'^api/', include(router.urls)),
     re_path(r'^api/members/sinlist', members.rest.MemberSinView.as_view()),

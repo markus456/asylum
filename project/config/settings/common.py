@@ -206,6 +206,10 @@ TEMPLATES = [
             ],
             # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             'context_processors': _TEMPLATE_CONTEXT_PROCESSORS,
+
+            #'libraries':{
+            #    'aggregation_utils': 'creditor.templatetags.aggregation_utils',
+            #},
         },
     },
 ]
