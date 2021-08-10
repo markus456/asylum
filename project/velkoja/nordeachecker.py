@@ -70,18 +70,21 @@ class NordeaOverdueInvoicesHandler(object):
 
         return ret
    
+    def _transaction_hold(self, transaction):
+        # If we have already sent notification recently, do not sent one just yet
+        if NotificationSent.objects.filter(transaction_unique_id=transaction.unique_id).count():
+            notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
+            if (timezone.now() - notified.stamp).days < settings.HOLVI_NOTIFICATION_INTERVAL_DAYS:
+                return None
+            # Also check that we have new transactions since the notification
+            if UploadedTransaction.objects.count():
+                last_transaction = UploadedTransaction.objects.order_by('-last_transaction')[0].last_transaction
+                if last_transaction < notified.stamp.date():
+                    return None
+        return transaction
+
     def _transaction_context(self, transaction):
         barcode_iban = settings.NORDEA_BARCODE_IBAN
-        # If we have already sent notification recently, do not sent one just yet
-    #    if NotificationSent.objects.filter(transaction_unique_id=transaction.unique_id).count():
-    #        notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
-    #        if (timezone.now() - notified.stamp).days < settings.HOLVI_NOTIFICATION_INTERVAL_DAYS:
-    #            return None
-    #        # Also check that we have new transactions since the notification
-    #        if UploadedTransaction.objects.count():
-    #            last_transaction = UploadedTransaction.objects.order_by('-last_transaction')[0].last_transaction
-    #            if last_transaction < notified.stamp.date():
-    #                return None
         barcode = None
         if barcode_iban:
             barcode = bank_barcode(barcode_iban, transaction.reference, -transaction.amount)
@@ -89,6 +92,7 @@ class NordeaOverdueInvoicesHandler(object):
         return { "transaction": transaction, "due": -transaction.amount, "barcode": barcode, "iban": barcode_iban, }
 
     def _transaction_notified(self, transaction, send):
+        notified = None
         try:
             notified = NotificationSent.objects.get(transaction_unique_id=transaction.unique_id)
             notified.notification_no += 1
@@ -97,6 +101,7 @@ class NordeaOverdueInvoicesHandler(object):
             notified.transaction_unique_id = transaction.unique_id
         notified.stamp = timezone.now()
         notified.email = transaction.owner.email
+
         if send:
             notified.save()
         return (notified, transaction)
@@ -109,36 +114,29 @@ class NordeaOverdueInvoicesHandler(object):
         grouped_overdue = groupby(overdue, lambda x: x.owner.email)
 
         ret = []
-        for receiver, transactions in grouped_overdue:
-            render_context_transactions = [ self._transaction_context(x) for x in transactions ]
-            print(render_context_transactions)
-            #mail = EmailMessage()
-            #print(mail.__dict__)
-            #mail.from_email = settings.VELKOJA_FROM_EMAIL
-            #mail.to = receiver #[transaction.owner.email]
+        for receiver, iter_transactions in grouped_overdue:
+            # Interator into list, send reminders unless time limits say otherwise
+            transactions = list(filter(None, [ self._transaction_hold(x) for x in iter_transactions ]))
+            if len(transactions) == 0:
+                continue
 
-            #if settings.VELKOJA_CC_EMAIL:
-            #    mail.cc = [settings.VELKOJA_CC_EMAIL]
+            render_context_transactions = [ self._transaction_context(x) for x in transactions ]
 
             render_context = { "transactions": render_context_transactions , }
-            print(render_context)
-            #print(send)
-            #print(receiver)
-
-            #mail.subject = "testi" #subject_template.render(render_context).strip()
-            #mail.body = body_template.render(render_context)
-            #print(mail.__dict__)
 
             mail = EmailMessage(
-                subject=subject_template.render(render_context).strip(),
-                body=body_template.render(render_context),
-                from_email=settings.VELKOJA_FROM_EMAIL,
-                to=[receiver],
-                cc=[settings.VELKOJA_CC_EMAIL] if settings.VELKOJA_CC_EMAIL else None)
+                subject = subject_template.render(render_context).strip(),
+                body = body_template.render(render_context),
+                from_email = settings.VELKOJA_FROM_EMAIL,
+                to = [receiver],
+                cc = [settings.VELKOJA_CC_EMAIL] if settings.VELKOJA_CC_EMAIL else None)
 
             if send:
-                mail.send()
-
-            ret += [ _transaction_notified(x, send) for x in transactions ]
+                try:
+                    mail.send()
+                except Exception as e:
+                    logger.exception("Sending email failed")
+ 
+            ret += [ self._transaction_notified(x, send) for x in transactions ]
 
         return ret
