@@ -3,7 +3,7 @@ reload
 staticfiles/
 media/
 bower_components/
-asylum/static/css/
+asylym/static/css/asylym.css
 asylum/static/js/
 asylum/static/fonts/
 

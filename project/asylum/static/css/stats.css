@@ -1,0 +1,49 @@
+.stats_table {
+	margin: 10px;
+}
+
+.stats_table th {
+	padding: 5px;
+	border-color: #cecece;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+}
+
+.stats_table td {
+	padding: 5px;
+	border-color: #cecece;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+}
+
+.stats_main {
+	max-width: 1000px;
+	margin: 0px auto;
+}
+
+.stats_right {
+  float: right;
+  max-width: 400px;
+}
+
+.stats_left {
+  clear: left;
+}
+
+
+.stats_months_sel_table th {
+	padding: 5px;
+}
+
+.stats_months_sel_table td {
+	padding: 5px;
+}
+
+.stats_tag_options {
+   display: inline-block;
+   margin-right: 10px;
+}
+
+.stats_tag_selected a {
+	text-decoration: underline;
+}
