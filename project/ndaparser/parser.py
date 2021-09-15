@@ -3,6 +3,7 @@
 
 from datetime import date
 from decimal import Decimal
+import sys
 
 
 class NdaTransaction(object):
@@ -43,6 +44,7 @@ class NdaTransaction(object):
     eventType = None  # type of transaction
     name = None  # name of creditor / debitor
     arhiveID = None  # Archive ID of transaction.
+    message = None
 
     def __init__(self, amount, timestamp, archiveID):
         self.amount = amount
@@ -50,7 +52,60 @@ class NdaTransaction(object):
         self.archiveID = archiveID
 
     def __repr__(self):
-        return "<ndaTransaction refNum:%s amt:%s time:%s type:%s name:%s ID:%s>" % (self.referenceNumber, self.amount, self.timestamp, self.eventType, self.name, self.archiveID)
+        return "<ndaTransaction refNum:%s amt:%s time:%s type:%s name:%s ID:%s msg:%s>" % (self.referenceNumber, self.amount, self.timestamp, self.eventType, self.name, self.archiveID, self.message)
+
+
+def nextField(part):
+    "Helper for calculating field offsets based on a previous field"
+    return part[0] + part[1]
+
+
+def getPart(line, offsets):
+    "Helper for extracting a field from a string at an offset with some pre-defined length"
+    return line[offsets[0]: offsets[0] + offsets[1]].rstrip()
+
+
+def parseExtra(line, transaction):
+    "Parses extra information related to a previous transaction"
+    lineType = getPart(line, (NdaTransaction.STRUCT_IDENTIFIER_START, NdaTransaction.STRUCT_IDENTIFIER_LENGTH))
+
+    # T11 is extra information about an existing transaction
+    if lineType != "T11":
+        return False
+
+    INFO_TYPE = (6, 2)
+    infoType = getPart(line, INFO_TYPE)
+
+    if infoType == "00":
+        # Sender added a message
+        MESSAGE = (8, 420)
+        transaction.message = getPart(line, MESSAGE)
+    elif infoType == "06":
+        # Information about the sender
+        # TODO: Figure out what this actually is
+        SENDER_INFO = (8, 70)
+    elif infoType == "07":
+        # Information added by the bank
+        # TODO: Figure out what this actually is
+        BANK_INFO = (8, 420)
+    elif infoType == "11":
+        # European money transfer extra info
+        # TODO: Are the rest of these needed?
+        REFNO = (8, 35)
+        IBAN = (nextField(REFNO), 35)
+        BIC = (nextField(IBAN), 35)
+        RECIPIENT = (nextField(BIC), 70)
+        SENDER = (nextField(RECIPIENT), 70)
+        SENDER_ID = (nextField(SENDER), 35)
+        ARCHIVE_ID = (nextField(SENDER_ID), 35)
+
+    return True
+
+
+def isTrx(line):
+    return "T10" == line[NdaTransaction.STRUCT_IDENTIFIER_START:
+                         NdaTransaction.STRUCT_IDENTIFIER_START +
+                         NdaTransaction.STRUCT_IDENTIFIER_LENGTH]
 
 
 def parseLine(line):
@@ -127,11 +182,23 @@ def ascii2scandic(string):
 
 
 if __name__ == "__main__":
-    transactions = []
-    with open("./tests/testdata.nda") as f:
-        for line in f:
-            transaction = parseLine(line)
-            if transaction is not None:
-                transactions.append(transaction)
+    files = sys.argv[1:] if len(sys.argv) > 1 else ["./tests/testdata.nda"]
+    for fname in files:
+        print(fname)
+        transactions = []
+        trxOk = False
+        with open(fname) as f:
+            for line in f:
+                if isTrx(line):
+                    transaction = parseLine(line)
+                    if transaction is not None:
+                        transactions.append(transaction)
+                        trxOk = True
+                    else:
+                        trxOk = False
+
+                elif trxOk:
+                    parseExtra(line, transactions[-1])
+
     for transaction in transactions:
         print(transaction)
