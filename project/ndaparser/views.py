@@ -9,7 +9,6 @@ from django.core.exceptions import ValidationError
 from .forms import UploadForm
 from .importer import NDAImporter
 from .models import UploadedTransaction
-from .parser import parseLine
 
 
 class NordeaUploadView(FormView):
@@ -35,16 +34,9 @@ class NordeaUploadView(FormView):
             h = NDAImporter(f)
             transactions = h.import_transactions(transactions_handler)
 
-        # parse the file again for the last transaction timestamp
         last_stamp = None
-        with open(tmp.name) as fp:
-            for line in fp:
-                nt = parseLine(line)
-                if not nt:
-                    continue
-                if not last_stamp:
-                    last_stamp = nt.timestamp
-                if nt.timestamp > last_stamp:
+        for nt in transactions:
+                if not last_stamp or nt.timestamp > last_stamp:
                     last_stamp = nt.timestamp
 
         try:

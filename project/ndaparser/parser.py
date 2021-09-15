@@ -181,24 +181,27 @@ def ascii2scandic(string):
     return string
 
 
+def parseStream(stream):
+    "Parse a stream of NDA records into transactions"
+    transactions = []
+    trxOk = False
+    for line in stream:
+        if isTrx(line):
+            transaction = parseLine(line)
+            if transaction is not None:
+                transactions.append(transaction)
+                trxOk = True
+            else:
+                trxOk = False
+        elif trxOk:
+            parseExtra(line, transactions[-1])
+    return transactions
+
+
 if __name__ == "__main__":
     files = sys.argv[1:] if len(sys.argv) > 1 else ["./tests/testdata.nda"]
     for fname in files:
         print(fname)
-        transactions = []
-        trxOk = False
         with open(fname) as f:
-            for line in f:
-                if isTrx(line):
-                    transaction = parseLine(line)
-                    if transaction is not None:
-                        transactions.append(transaction)
-                        trxOk = True
-                    else:
-                        trxOk = False
-
-                elif trxOk:
-                    parseExtra(line, transactions[-1])
-
-    for transaction in transactions:
-        print(transaction)
+            for transaction in parseStream(f):
+                print(transaction)
