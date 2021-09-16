@@ -15,6 +15,16 @@
     <div id="content-main">
         <div class="module">
         {% if transactions %}
+            {% if info %}
+                <p> <b>Found transactions without a reference number:</b> </p>
+                <ul>
+                  {% for i in info %}
+                      <li>{{ i }}</li>
+                  {% endfor%}
+                </ul>
+            {% endif %}
+
+            <p> <b>Successfully processed transactions:</b> </p>
             <ul>
             {% for t in transactions %}
                 <li>{{ t }}</li>

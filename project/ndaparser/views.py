@@ -48,6 +48,7 @@ class NordeaUploadView(FormView):
 
             context['title'] = _("Transactions uploaded")
             context['transactions'] = transactions
+            context['info'] = [str(t) for t in transactions if t.message and not t.referenceNumber]
         except ValidationError:
             context['error'] = _("Invalid NDA document")
 
