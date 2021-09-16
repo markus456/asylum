@@ -2,7 +2,7 @@
 import os
 
 import pytest
-from ndaparser.parser import parseLine
+from ndaparser.parser import parseLine, parseStream
 
 
 def test_parser():
@@ -14,3 +14,11 @@ def test_parser():
                 transactions.append(transaction)
     assert len(transactions) == 12
     assert transactions[2].amount == 40
+
+
+def test_stream_parser():
+    with open(os.path.join(os.path.dirname(__file__), "testdata.nda")) as f:
+        transactions = parseStream(f)
+        assert len(transactions) == 12
+        assert transactions[2].amount == 40
+        assert transactions[10].message == "Kulukorvaus remonttitarvikkeista"
