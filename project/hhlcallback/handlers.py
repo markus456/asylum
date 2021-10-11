@@ -341,10 +341,6 @@ class TransactionHandler(BaseTransactionHandler):
 
     def import_holvi_overpaid_transaction(self, at, lt):
         """Look for a transaction with same reference but opposite same or lesser value. If found use that for owner and tag"""
-        if len(at.reference) < 2:  # Jus so we do not get indexerrors from empty references or something
-            return None
-        if at.reference[0:2] != "RF":
-            return None
         qs = Transaction.objects.filter(reference=at.reference, amount__gte=-at.amount).order_by('-stamp')
         if not qs.count():
             return None
