@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
+from csv import DictReader
 
 
 class NdaTransaction(object):
@@ -126,6 +127,22 @@ def ascii2scandic(string):
     return string
 
 
+def parseCsv(f):
+    transactions = []
+    for t in DictReader(f, delimiter=';'):
+        if not t["Viitenumero"]:
+            continue
+        amount = int(float(t["Määrä"].replace(",", ".")))
+        timestamp = datetime.strptime(t["Kirjauspäivä"], "%Y/%m/%d").date()
+        archive_id = "TODO: We need the archive ID"
+        trx = NdaTransaction(amount, timestamp, archive_id)
+        trx.name = t["Otsikko"]
+        trx.referenceNumber = t["Viitenumero"]
+        trx.eventType = "Viitemaksu"
+        transactions.append(trx)
+    return transactions
+
+
 if __name__ == "__main__":
     transactions = []
     with open("./tests/testdata.nda") as f:
@@ -135,3 +152,11 @@ if __name__ == "__main__":
                 transactions.append(transaction)
     for transaction in transactions:
         print(transaction)
+
+    with open("./tests/testdata.csv", "r") as f:
+        transactions = parseCsv(f)
+        last_stamp = max(t.timestamp for t in transactions)
+        print(f"last stamp: {last_stamp}")
+
+        for transaction in transactions:
+            print(transaction)
