@@ -4,6 +4,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 from csv import DictReader
+from hashlib import sha1
 
 
 class NdaTransaction(object):
@@ -134,7 +135,9 @@ def parseCsv(f):
             continue
         amount = int(float(t["Määrä"].replace(",", ".")))
         timestamp = datetime.strptime(t["Kirjauspäivä"], "%Y/%m/%d").date()
-        archive_id = "TODO: We need the archive ID"
+        archive_id = sha1((t["Kirjauspäivä"] + t["Määrä"] + t["Maksaja"]
+                          + t["Maksunsaaja"] + t["Nimi"] + t["Otsikko"]
+                          + t["Viitenumero"]+ t["Valuutta"]).encode("utf8")).hexdigest()
         trx = NdaTransaction(amount, timestamp, archive_id)
         trx.name = t["Otsikko"]
         trx.referenceNumber = t["Viitenumero"]
