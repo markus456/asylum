@@ -4,4 +4,5 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UploadForm(forms.Form):
-    ndafile = forms.FileField(required=True, label=_("Transactions file"))
+    ndafile = forms.FileField(required=False, label=_("Transactions file"))
+    csvfile = forms.FileField(required=False, label=_("Transactions CSV file"))

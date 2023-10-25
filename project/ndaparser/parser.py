@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
+from csv import DictReader
+from hashlib import sha1
 
 
 class NdaTransaction(object):
@@ -126,6 +128,23 @@ def ascii2scandic(string):
     return string
 
 
+def parseCsv(f):
+    transactions = []
+    for t in DictReader(f, delimiter=';'):
+        if t["Määrä"] and t["Kirjauspäivä"]:
+            amount = int(float(t["Määrä"].replace(",", ".")))
+            timestamp = datetime.strptime(t["Kirjauspäivä"], "%Y/%m/%d").date()
+            archive_id = sha1((t["Kirjauspäivä"] + t["Määrä"] + t["Maksaja"]
+                               + t["Maksunsaaja"] + t["Nimi"] + t["Otsikko"]
+                               + t["Viitenumero"]+ t["Valuutta"]).encode("utf8")).hexdigest()
+            trx = NdaTransaction(amount, timestamp, archive_id)
+            trx.name = t["Otsikko"]
+            trx.referenceNumber = t["Viitenumero"]
+            trx.eventType = "Viitemaksu"
+            transactions.append(trx)
+    return transactions
+
+
 if __name__ == "__main__":
     transactions = []
     with open("./tests/testdata.nda") as f:
@@ -135,3 +154,20 @@ if __name__ == "__main__":
                 transactions.append(transaction)
     for transaction in transactions:
         print(transaction)
+
+    with open("./tests/testdata.csv", "r") as f:
+        transactions = parseCsv(f)
+        last_stamp = max(t.timestamp for t in transactions)
+        print(f"last stamp: {last_stamp}")
+
+        for transaction in transactions:
+            print(transaction)
+
+        assert(transactions[0].referenceNumber == "123451")
+        assert(transactions[1].referenceNumber == "123454")
+        assert(transactions[2].referenceNumber == "123455")
+        assert(transactions[3].referenceNumber == "123456")
+        assert(transactions[4].referenceNumber == "123457")
+        assert(transactions[5].referenceNumber == "")
+        assert(transactions[5].name == "ANONYMOUS HACKER")
+        assert(transactions[6].referenceNumber == "123459")
