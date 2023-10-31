@@ -131,17 +131,20 @@ def ascii2scandic(string):
 def parseCsv(f):
     transactions = []
     for t in DictReader(f, delimiter=';'):
-        if t["Määrä"] and t["Kirjauspäivä"]:
-            amount = int(float(t["Määrä"].replace(",", ".")))
-            timestamp = datetime.strptime(t["Kirjauspäivä"], "%Y/%m/%d").date()
-            archive_id = sha1((t["Kirjauspäivä"] + t["Määrä"] + t["Maksaja"]
-                               + t["Maksunsaaja"] + t["Nimi"] + t["Otsikko"]
-                               + t["Viitenumero"]+ t["Valuutta"]).encode("utf8")).hexdigest()
-            trx = NdaTransaction(amount, timestamp, archive_id)
-            trx.name = t["Otsikko"]
-            trx.referenceNumber = t["Viitenumero"]
-            trx.eventType = "Viitemaksu"
-            transactions.append(trx)
+        try:
+            if t["Määrä"] and t["Kirjauspäivä"]:
+                amount = int(float(t["Määrä"].replace(",", ".")))
+                timestamp = datetime.strptime(t["Kirjauspäivä"], "%Y/%m/%d").date()
+                archive_id = sha1((t["Kirjauspäivä"] + t["Määrä"] + t["Maksaja"]
+                                   + t["Maksunsaaja"] + t["Nimi"] + t["Otsikko"]
+                                   + t["Viitenumero"]+ t["Valuutta"]).encode("utf8")).hexdigest()
+                trx = NdaTransaction(amount, timestamp, archive_id)
+                trx.name = t["Otsikko"]
+                trx.referenceNumber = t["Viitenumero"]
+                trx.eventType = "Viitemaksu"
+                transactions.append(trx)
+        except Exception as e:
+            print(f"Ignoring row due to {type(e)}: {e}")
     return transactions
 
 
@@ -171,3 +174,8 @@ if __name__ == "__main__":
         assert(transactions[5].referenceNumber == "")
         assert(transactions[5].name == "ANONYMOUS HACKER")
         assert(transactions[6].referenceNumber == "123459")
+
+    # Test that uploading "garbage" doesn't break anything
+    with open("./tests/testdata.nda") as f:
+        transactions = parseCsv(f)
+        assert(len(transactions) == 0)
